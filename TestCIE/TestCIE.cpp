@@ -788,7 +788,7 @@ int main(int argc, char* argv[])
 #else
 
 	//const char* szCryptoki = "libcie-pkcs11.so";
-	const char* szCryptoki = "libcie-pkcs11.so";
+	const char* szCryptoki = argv[1]? argv[1]: "libcie-pkcs11.so";
 	std::cout << "Load Module " << szCryptoki << std::endl;
 
 	void* hModule = dlopen(szCryptoki, RTLD_LOCAL | RTLD_LAZY);
