@@ -10,6 +10,12 @@ CIE (Carta di Identità Elettronica) Linux middleware
 
 This product is **beta software**. Use it in production at your own judgment.
 
+## This fork
+
+Forked on 25 March 2022.  The aim is to obtain something that works
+smoothly with Debian-derived Linux distribution using FireFox and
+command line tools.
+
 ## Requirements
 
 - running pcscd
@@ -53,15 +59,9 @@ This will build a static library and copy it into `cie-pkcs11/Sign`
 
 ### cie-pkcs11
 
-Open the repository root directory with Eclipse, its auto-discovery tool should
-find at least two projects:
-
-- cie-pkcs11, a C++ project
-- CIEID, a Java project
-
-In *Project Explorer* view, select the project root, then select menu item
-`Project > Build project`.
-This should leave a `libcie-pkcs11.so` object in Debug (the default target).
+Run `build-cie-pkcs11` from the project's root directory.  Note that there
+are two alternative linking.  By defining `NO_DEP`, most project-local
+dependencies are discarded.
 
 ### CIEID
 
