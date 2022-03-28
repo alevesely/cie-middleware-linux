@@ -788,7 +788,7 @@ int main(int argc, char* argv[])
 #else
 
 	//const char* szCryptoki = "libcie-pkcs11.so";
-	const char* szCryptoki = argv[1]? argv[1]: "libcie-pkcs11.so";
+	const char* szCryptoki = argv[1] && strlen(argv[1]) > 3? argv[1]: "libcie-pkcs11.so";
 	std::cout << "Load Module " << szCryptoki << std::endl;
 
 	void* hModule = dlopen(szCryptoki, RTLD_LOCAL | RTLD_LAZY);
@@ -850,6 +850,7 @@ int main(int argc, char* argv[])
 			std::cout << "\nTest numbers:" << std::endl;
 			std::cout << "1 Init and Finalize" << std::endl;
 			std::cout << "2 Read slot list" << std::endl;
+			std::cout << "2bis Read slot list many times" << std::endl;
 			std::cout << "3 Read slot and inserted token with token info" << std::endl;
 			std::cout << "4 Open Session" << std::endl;
 			std::cout << "5 Find objects" << std::endl;
@@ -866,7 +867,7 @@ int main(int argc, char* argv[])
 			std::cout << "Insert the test number:" << std::endl;
 			std::cin >> sCommandLine;
 
-			if (sCommandLine.length() <= 2)
+			if (sCommandLine.length() <= 4)
 				szCmd = (char*)sCommandLine.c_str();
 			else
 				szCmd = (char*)"";
@@ -901,6 +902,29 @@ int main(int argc, char* argv[])
 			}
 			close();
 			std::cout << "-> Test 02 concluso" << std::endl;
+		}
+		else if (strcmp(szCmd, "2bis") == 0)
+		{
+			CK_ULONG ulCount = 0;
+			std::cout << "-> Test 02bis Lettura multipla slot list" << std::endl;
+			init();
+
+			std::string cont;
+			do
+			{
+				CK_SLOT_ID_PTR pSlotList = getSlotList(false, &ulCount);
+				if (pSlotList != NULL_PTR)
+				{
+					free(pSlotList);
+				}
+
+				std::cout << "Invio per continuare -- altro per smettere" << std::endl;
+				std::getline(std::cin, cont);
+			} while (cont.empty());
+
+			close();
+			std::cin.clear();
+			std::cout << "-> Test 02bis concluso" << std::endl;
 		}
 		else if (strcmp(szCmd, "3") == 0)
 		{
