@@ -31,7 +31,7 @@ if [ -z "$NO_DEP" ]; then
 else
 	unset DEPENDENCIES
 	GOPT="-DDEFINE_CFuncCallInfo $GOPT"
-	LIBS="-Wl,-Bstatic -lcrypto++ -Wl,-Bdynamic -lpcsclite -lxml2"
+	LIBS="-Wl,-Bstatic -lcrypto++ -Wl,-Bdynamic -lpcsclite -lxml2 -lcrypto"
 fi
 
 

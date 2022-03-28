@@ -44,7 +44,7 @@ std::map<CK_MECHANISM_TYPE, std::string> mechanismMap;
 void error(CK_RV rv)
 {
 	printf("  -------------------\n");
-	printf("  <e> Errore n. 0x%X\n", rv);
+	printf("  <e> Errore n. 0x%lX\n", rv);
 	printf("  -------------------\n");
 
 	//std::cout << "  <e> Errore n. " << rv << std::endl;
@@ -599,7 +599,7 @@ bool digest(CK_SESSION_HANDLE hSession, CK_MECHANISM_TYPE mechanism)
 
 	UUCByteArray dataValHashed;
 
-	CK_ULONG ulCount = 1;
+	//CK_ULONG ulCount = 1;
 
 	CK_MECHANISM pMechanism[] = { mechanism, NULL_PTR, 0 };
 	BYTE* pOutput;
@@ -1047,7 +1047,7 @@ int main(int argc, char* argv[])
 			init();
 			CK_SLOT_ID pSlotList[1];
 			std::cout << "-> Attende l'inserimento della carta" << std::endl;
-			CK_RV rv = g_pFuncList->C_WaitForSlotEvent(0, pSlotList, 0);
+			/* CK_RV rv = */ g_pFuncList->C_WaitForSlotEvent(0, pSlotList, 0);
 			getSlotInfo(pSlotList[0]);
 			std::cout << "-- Carta Inserita" << std::endl;
 

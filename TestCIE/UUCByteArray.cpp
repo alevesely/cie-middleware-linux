@@ -139,15 +139,15 @@ long UUCByteArray::load(const char* szHexString)
 	m_nCapacity = m_unLen;	
 	//m_pbtContent = (BYTE*)GlobalAlloc(GPTR, m_nCapacity);
 	m_pbtContent = (BYTE*)malloc(m_nCapacity);
-    if(m_pbtContent == NULL)
-        return ERROR_UNABLE_TO_ALLOCATE;
-        
+	if(m_pbtContent == NULL)
+		return ERROR_UNABLE_TO_ALLOCATE;
+
 	for(unsigned int i = 0; i < m_unLen; i++)
 	{
 		m_pbtContent[i] = atox((char*)szHexString + (i * 2));
 	}
-    
-    return S_OK;
+	
+	return S_OK;
 }
 
 const BYTE* UUCByteArray::getContent() const
@@ -210,18 +210,18 @@ long UUCByteArray::append(const BYTE btVal)
 	if(m_unLen == m_nCapacity)
 	{
 		m_nCapacity += DEFAULT_CAPACITY;
-        BYTE* buffer = (BYTE*)realloc(m_pbtContent, m_nCapacity);
-        if(buffer == NULL)
-            return ERROR_UNABLE_TO_ALLOCATE;
-        
-        m_pbtContent = buffer;
+		BYTE* buffer = (BYTE*)realloc(m_pbtContent, m_nCapacity);
+		if(buffer == NULL)
+			return ERROR_UNABLE_TO_ALLOCATE;
+		
+		m_pbtContent = buffer;
 	}
 		
 	m_pbtContent[m_unLen] = btVal;
 
 	m_unLen++;
-    
-    return S_OK;
+	
+	return S_OK;
 }
 
 long UUCByteArray::append(const BYTE* pbtVal, const unsigned long nLen)
@@ -229,11 +229,11 @@ long UUCByteArray::append(const BYTE* pbtVal, const unsigned long nLen)
 	if(m_unLen + nLen > m_nCapacity)
 	{
 		m_nCapacity += nLen;
-        BYTE* buffer = (BYTE*)realloc(m_pbtContent, m_nCapacity);
-        if(buffer == NULL)
-            return ERROR_UNABLE_TO_ALLOCATE;
-        
-        m_pbtContent = buffer;
+		BYTE* buffer = (BYTE*)realloc(m_pbtContent, m_nCapacity);
+		if(buffer == NULL)
+			return ERROR_UNABLE_TO_ALLOCATE;
+		
+		m_pbtContent = buffer;
 	}
 
 	for(unsigned int i = 0; i < nLen; i++)
@@ -241,8 +241,8 @@ long UUCByteArray::append(const BYTE* pbtVal, const unsigned long nLen)
 		m_pbtContent[m_unLen] = pbtVal[i];
 		m_unLen++;		
 	}
-    
-    return S_OK;
+	
+	return S_OK;
 }
 
 long UUCByteArray::append(const UUCByteArray& val)
@@ -279,10 +279,10 @@ void UUCByteArray::toHexString(char* szHexString) const
 long UUCByteArray::reverse()
 {
 	BYTE* pbtContent = (BYTE*)malloc(m_unLen);
-    if(m_pbtContent == NULL)
-        return ERROR_UNABLE_TO_ALLOCATE;
-    
-	for(int i = 0; i < m_unLen; i++)
+	if(m_pbtContent == NULL)
+		return ERROR_UNABLE_TO_ALLOCATE;
+
+	for(unsigned int i = 0; i < m_unLen; i++)
 	{
 		pbtContent[i] = m_pbtContent[m_unLen - i - 1];
 	}
@@ -290,8 +290,8 @@ long UUCByteArray::reverse()
 	memcpy(m_pbtContent, pbtContent, m_unLen);
 
 	free(pbtContent);
-    
-    return S_OK;
+	
+	return S_OK;
 }
 
 const char* UUCByteArray::toHexString() 
@@ -307,18 +307,18 @@ const char* UUCByteArray::toHexString(int nSize)
 		m_szHex = NULL;
 	}
 
-	if(nSize == 0 || nSize > m_unLen)
+	if(nSize <= 0 || (unsigned)nSize > m_unLen)
 	{
 		nSize = (int)m_unLen;
 	}
 	
-	m_szHex = new char[(nSize + 1) * 2];	
+	m_szHex = new char[(nSize + 1) * 2];
 
 	try
 	{
 		char szDigit[3];
-        memset(m_szHex, 0, (nSize + 1) * 2);
-		for(unsigned int i = 0; i < nSize; i++)
+		memset(m_szHex, 0, (nSize + 1) * 2);
+		for(int i = 0; i < nSize; i++)
 		{
 			snprintf(szDigit, 3, "%02X", m_pbtContent[i]);
 			strncat(m_szHex, szDigit, 2);
@@ -338,42 +338,42 @@ const char* UUCByteArray::toHexString(int nSize)
 
 int atox(const char* szVal)
 {
-    int nVal = 0;
-    
-    if(szVal[1] >='0' && szVal[1] <= '9')
-    {
-        nVal = szVal[1] - '0';
-    }
-    else if(szVal[1] >='a' && szVal[1] <= 'f')
-    {
-        nVal = szVal[1] - 'a' + 10;
-    }
-    else if(szVal[1] >='A' && szVal[1] <= 'F')
-    {
-        nVal = szVal[1] - 'A' + 10;
-    }
-    else
-    {
-        throw(-1);
-    }
-    
-    
-    if(szVal[0] >='0' && szVal[0] <= '9')
-    {
-        nVal += (szVal[0] - '0') * 16;
-    }
-    else if(szVal[0] >='a' && szVal[0] <= 'f')
-    {
-        nVal += (szVal[0] - 'a' + 10) * 16;
-    }
-    else if(szVal[0] >='A' && szVal[0] <= 'F')
-    {
-        nVal += (szVal[0] - 'A' + 10) * 16;
-    }
-    else
-    {
-        throw(-1);
-    }
-    
-    return nVal;
+	int nVal = 0;
+	
+	if(szVal[1] >='0' && szVal[1] <= '9')
+	{
+		nVal = szVal[1] - '0';
+	}
+	else if(szVal[1] >='a' && szVal[1] <= 'f')
+	{
+		nVal = szVal[1] - 'a' + 10;
+	}
+	else if(szVal[1] >='A' && szVal[1] <= 'F')
+	{
+		nVal = szVal[1] - 'A' + 10;
+	}
+	else
+	{
+		throw(-1);
+	}
+	
+	
+	if(szVal[0] >='0' && szVal[0] <= '9')
+	{
+		nVal += (szVal[0] - '0') * 16;
+	}
+	else if(szVal[0] >='a' && szVal[0] <= 'f')
+	{
+		nVal += (szVal[0] - 'a' + 10) * 16;
+	}
+	else if(szVal[0] >='A' && szVal[0] <= 'F')
+	{
+		nVal += (szVal[0] - 'A' + 10) * 16;
+	}
+	else
+	{
+		throw(-1);
+	}
+	
+	return nVal;
 }
