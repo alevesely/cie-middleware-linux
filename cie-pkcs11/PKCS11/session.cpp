@@ -79,6 +79,7 @@ namespace p11 {
 		init_func
 		dwSessionCnt++;
 		//return InterlockedIncrement(&dwSessionCnt);
+		return dwSessionCnt;
 	}
 
 	CK_SESSION_HANDLE CSession::AddSession(std::unique_ptr<CSession> pSession)
@@ -136,7 +137,7 @@ namespace p11 {
 				throw p11_error(CKR_USER_ANOTHER_ALREADY_LOGGED_IN);
 		if (pSlot->User == CKU_SO && userType == CKU_USER)
 			throw p11_error(CKR_USER_ANOTHER_ALREADY_LOGGED_IN);
-					bool bExistsRO = false;
+
 		if (userType == CKU_SO) {
 			if (ExistsRO())
 				throw p11_error(CKR_SESSION_READ_ONLY_EXISTS);
@@ -400,7 +401,7 @@ namespace p11 {
 			if (pDigestMechanism != nullptr)
 				throw p11_error(CKR_OPERATION_ACTIVE);
 
-				switch (pMechanism->mechanism) {
+			switch (pMechanism->mechanism) {
 				case CKM_SHA_1:
 				{
 					auto mech = std::unique_ptr<CDigestSHA>(new CDigestSHA(shared_from_this()));
@@ -639,7 +640,7 @@ namespace p11 {
 
 		auto mech = std::move(pVerifyRecoverMechanism);
 
-		CK_ULONG ulKeyLen = pVerifyRecoverMechanism->VerifyRecoverLength();
+		/* CK_ULONG ulKeyLen =*/ pVerifyRecoverMechanism->VerifyRecoverLength();
 		ByteDynArray baData = pVerifyRecoverMechanism->VerifyRecover(Signature);
 
 		if (!Data.isNull() && Data.size()<baData.size()) {
@@ -1250,7 +1251,7 @@ namespace p11 {
 			if (Key.isNull())
 				throw p11_error(CKR_SAVED_STATE_INVALID);
 
-			std::shared_ptr<CP11Object> pKey = pSlot->FindP11Object(CKO_PRIVATE_KEY, CKA_ID, Key.data(), (int)Key.size());
+			std::shared_ptr<CP11Object> pKey = pSlot->FindP11Object(CKO_PRIVATE_KEY, CKA_ID, Key.data(), Key.size());
 			ER_ASSERT(pKey != nullptr, ERR_CANT_GET_OBJECT);
 			CK_OBJECT_HANDLE hKey = pSlot->GetIDFromObject(pKey);
 
