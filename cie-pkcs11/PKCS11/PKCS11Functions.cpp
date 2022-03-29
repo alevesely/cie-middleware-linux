@@ -259,6 +259,10 @@ CK_RV CK_ENTRY C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK
 		if (!bP11Initialized)
 			throw p11_error(CKR_CRYPTOKI_NOT_INITIALIZED);
 
+	// In case reader just plugged in.
+	if (CSlot::g_mSlots.size()==0)
+		CSlot::InitSlotList();
+
 	bool bOver=false;
 	std::vector<CK_SLOT_ID> slotsRet;
 	unsigned int iCnt;
