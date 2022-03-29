@@ -3,6 +3,12 @@
 # Tentative script to allow compilation without Eclipse.
 # Must be launched from the project base directory.
 
+# Argument: just one or all
+SOURCE="\*.cpp"
+if [ -n "$1" ]; then
+	SOURCE=$1
+fi
+
 PROJ_DIR=$(pwd)
 CIEPKI_DIR=$PROJ_DIR/cie-pkcs11
 CIESDK_DIR=$PROJ_DIR/cie_sign_sdk
@@ -37,7 +43,7 @@ fi
 
 if cd $TARGET_DIR; then
 	ALL_OBJ=""
-	for src in $(find ../cie-pkcs11 -type f -name \*.cpp); do
+	for src in $(find ../cie-pkcs11 -type f -name $SOURCE); do
 		failed=1
 		obj=$(echo $src| sed -e 's/^\.\.\///' -e 's/.cpp$/.o/')
 		mkdir -p $(dirname $obj) || break
