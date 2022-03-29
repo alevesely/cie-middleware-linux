@@ -62,6 +62,15 @@ namespace p11 {
             return ++dwSlotCnt;
     }
 
+	static void exit_monitor(bool set_ev = true)
+	// called by slotMonitor before exiting
+	{
+		if (set_ev)
+			p11slotEvent.set();
+		CSlot::ThreadContext = NULL;
+		CSlot::g_mSlots.clear();
+	}
+
 	static DWORD slotMonitor(SlotMap *pSlotMap)
 	{
 		while (true) {
@@ -76,7 +85,7 @@ namespace p11 {
 				std::unique_lock<std::mutex> lock(p11Mutex);
 				for (SlotMap::const_iterator it = pSlotMap->begin(); it != pSlotMap->end(); it++, i++) {
 					if (!bP11Initialized) {
-						CSlot::ThreadContext = NULL;
+						exit_monitor(false);
 						return 0;
 					}
 
@@ -88,7 +97,7 @@ namespace p11 {
 							// non uso la ExitThread!!!
 							// altrimenti non chiamo i distruttori, e mi rimane tutto appeso
 							// SOPRATTUTTO il p11Mutex
-							CSlot::ThreadContext = NULL;
+							exit_monitor(false);
 							return 1;
 						}
 					}
@@ -106,29 +115,26 @@ namespace p11 {
 					}
 					if (ris == SCARD_E_CANCELLED || bP11Terminate || !bP11Initialized) {
                         LOG_DEBUG("slotMonitor - Terminate");
-						p11slotEvent.set();
-						CSlot::ThreadContext = NULL;
+						exit_monitor();
 						// no exitThread, vedi sopra;
 						return 0;
 					}
 					if (ris != SCARD_E_TIMEOUT && ris != SCARD_E_NO_READERS_AVAILABLE) {
                         LOG_ERROR("slotMonitor - SCardGetStatusChange error: %08X", ris);
-						p11slotEvent.set();
-						CSlot::ThreadContext = NULL;
+						exit_monitor();
 						// no exitThread, vedi sopra;
 						return 1;
 					}
 					if (ris == SCARD_E_NO_READERS_AVAILABLE) {
 						LOG_INFO("slotMonitor - No smart card reader connected: %08X", ris);
-						CSlot::ThreadContext = NULL;
+						exit_monitor(false);
 						// no exitThread, vedi sopra;
 						return 1;
 					}
 				}
 				if (bP11Terminate || !bP11Initialized) {
                     LOG_INFO("slotMonitor - Terminate");
-					p11slotEvent.set();
-					CSlot::ThreadContext = NULL;
+					exit_monitor();
 					// no exitThread, vedi sopra;
 					return 0;
 				}
@@ -167,6 +173,7 @@ namespace p11 {
 			CSlot::ThreadContext = NULL;
 		}
 		// no exitThread, vedi sopra;
+		exit_monitor();
 		return 0;
 	}
 

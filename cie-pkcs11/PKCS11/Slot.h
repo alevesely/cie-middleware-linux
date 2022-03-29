@@ -38,6 +38,7 @@ class CSlot
 {
 private:
 	static DWORD dwSlotCnt; //counter degli slot (ID P11)
+	static void exit_monitor(bool set_ev = true);
 	ByteDynArray GetATR();
 
 public:
