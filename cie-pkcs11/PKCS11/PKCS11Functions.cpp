@@ -260,7 +260,7 @@ CK_RV CK_ENTRY C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK
 			throw p11_error(CKR_CRYPTOKI_NOT_INITIALIZED);
 
 	// In case reader just plugged in.
-	if (CSlot::g_mSlots.size()==0)
+	if (CSlot::ThreadContext==NULL)
 		CSlot::InitSlotList();
 
 	bool bOver=false;
