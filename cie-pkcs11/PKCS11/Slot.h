@@ -92,7 +92,7 @@ public:
 	void Final();
 
 	void AddP11Object(std::shared_ptr<CP11Object> object);
-	std::shared_ptr<CP11Object> FindP11Object(CK_OBJECT_CLASS objClass, CK_ATTRIBUTE_TYPE attr, CK_BYTE *val, int valLen);
+	std::shared_ptr<CP11Object> FindP11Object(CK_OBJECT_CLASS objClass, CK_ATTRIBUTE_TYPE attr, CK_BYTE *val, unsigned int valLen);
 	void DelP11Object(const std::shared_ptr<CP11Object>& pObject);
 	void ClearP11Objects();
 	bool IsTokenPresent();

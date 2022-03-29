@@ -50,7 +50,7 @@ namespace p11 {
 		pTemplate = NULL;
 		//slotMutex.Create(mutexName(szReader));
 		pSerialTemplate = NULL;
-		hCard = NULL;
+		hCard = (SCARDHANDLE)NULL;
 	}
 
 	CSlot::~CSlot() {
@@ -285,7 +285,7 @@ namespace p11 {
 			std::shared_ptr<CSlot> pSlot = GetSlotFromReaderName(szReaderName);
 			if (pSlot == nullptr) {
 				auto pSlot = std::make_shared<CSlot>(szReaderName);
-				CK_SLOT_ID hSlotID = AddSlot(pSlot);
+				AddSlot(pSlot);
 				bMapChanged = true;
 			}
 			szReaderName = szReaderName + strnlen(szReaderName, readersLen) + 1;
@@ -528,7 +528,7 @@ namespace p11 {
 		}
 	}
 
-	std::shared_ptr<CP11Object> CSlot::FindP11Object(CK_OBJECT_CLASS objClass, CK_ATTRIBUTE_TYPE attr, CK_BYTE *val, int valLen)
+	std::shared_ptr<CP11Object> CSlot::FindP11Object(CK_OBJECT_CLASS objClass, CK_ATTRIBUTE_TYPE attr, CK_BYTE *val, unsigned int valLen)
 	{
 		init_func
 			for (DWORD i = 0; i < P11Objects.size(); i++)
