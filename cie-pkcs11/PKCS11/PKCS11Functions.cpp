@@ -52,7 +52,7 @@ CK_MECHANISM_TYPE P11mechanisms[]= {
 };
 
 
-char *getAttributeName(unsigned long dwId);
+char const *getAttributeName(unsigned long dwId);
 //extern CModuleInfo moduleInfo; // informazioni sulla dll (o so)
 bool bModuleInit=false;
 
@@ -387,7 +387,7 @@ CK_RV CK_ENTRY C_Finalize(CK_VOID_PTR pReserved)
 		CCardContext *tc = CSlot::ThreadContext;
 		if (tc != nullptr) {
 			SCARDCONTEXT hC = tc->hContext;
-			if (hC != NULL)
+			if (hC != (SCARDCONTEXT)NULL)
 				SCardCancel(hC);
 		}
 		p11Mutex.unlock();
@@ -2137,7 +2137,7 @@ CK_RV CK_ENTRY C_GetFunctionStatus(CK_SESSION_HANDLE hSession) unsupported
 CK_RV CK_ENTRY C_CancelFunction(CK_SESSION_HANDLE hSession) unsupported
 
 
-char *getAttributeName(unsigned long dwId) {
+char const* getAttributeName(unsigned long dwId) {
 	switch (dwId) {
 		case 0x00000000: return("CKA_CLASS");
 		case 0x00000001: return("CKA_TOKEN");
