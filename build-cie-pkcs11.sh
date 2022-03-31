@@ -56,7 +56,8 @@ if cd $TARGET_DIR; then
 
 	if [ $failed = 0 ]; then
 		echo "Linking with $LIBS"
-		g++ $DEPENDENCIES -Xlinker --allow-multiple-definition -Xlinker --undefined=EVP_idea_cbc -Xlinker --undefined=TLS_client_method -Xlinker --undefined=curl_global_init -Xlinker --undefined=png_get_valid -Xlinker --undefined=FcInitLoadConfigAndFonts -shared -pthread -o libcie-pkcs11.so $ALL_OBJ $LIBS && echo "Link ok"
+		#g++ $DEPENDENCIES -Xlinker --undefined=EVP_idea_cbc -Xlinker --undefined=TLS_client_method -Xlinker --undefined=curl_global_init -Xlinker --undefined=png_get_valid -Xlinker --undefined=FcInitLoadConfigAndFonts -shared -pthread -o libcie-pkcs11.so $ALL_OBJ $LIBS && echo "Link ok"
+		g++ $DEPENDENCIES -shared -pthread -o libcie-pkcs11.so $ALL_OBJ $LIBS && echo "Link ok"
 	fi
 fi
 
