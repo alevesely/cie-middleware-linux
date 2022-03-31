@@ -30,9 +30,12 @@
 
 #include <string>
 
-#include "../Cryptopp/eccrypto.h"
-#include "../Cryptopp/rsa.h"
-#include "../Cryptopp/secblock.h"
+#include <crypto++/eccrypto.h>
+#include <crypto++/eccrypto.h>
+#include <crypto++/rsa.h>
+#include <crypto++/rsa.h>
+#include <crypto++/secblock.h>
+#include <crypto++/secblock.h>
 #include "../PKCS11/wintypes.h"
 
 #define Buffer std::vector<unsigned char>

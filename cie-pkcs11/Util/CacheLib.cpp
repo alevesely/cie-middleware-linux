@@ -8,7 +8,8 @@
 //#include "sddl.h"
 //#include "Aclapi.h"
 //#include <VersionHelpers.h>
-#include "../Cryptopp/misc.h"
+#include <crypto++/misc.h>
+#include <crypto++/misc.h>
 #include "util.h"
 
 //#ifndef WIN32
@@ -18,11 +19,15 @@
 #include <string>
 #include <regex>
 
-#include "../Cryptopp/modes.h"
-#include "../Cryptopp/aes.h"
-#include "../Cryptopp/filters.h"
+#include <crypto++/modes.h>
+#include <crypto++/modes.h>
+#include <crypto++/aes.h>
+#include <crypto++/aes.h>
+#include <crypto++/filters.h>
+#include <crypto++/filters.h>
 #include "../keys.h"
-#include "../Cryptopp/sha.h"
+#include <crypto++/sha.h>
+#include <crypto++/sha.h>
 
 #include <pwd.h>
 

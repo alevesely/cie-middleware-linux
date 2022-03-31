@@ -1,6 +1,7 @@
 
 #include "DES3.h"
-#include "../Cryptopp/misc.h"
+#include <crypto++/misc.h>
+#include <crypto++/misc.h>
 
 //extern CLog Log;
 

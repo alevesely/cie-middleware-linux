@@ -7,12 +7,17 @@
 #include "../Crypto/SHA1.h"
 #include "../Crypto/DES3.h"
 #include "../Crypto/MAC.h"
-#include "../Cryptopp/misc.h"
+#include <crypto++/misc.h>
+#include <crypto++/misc.h>
 #include "../Util/ModuleInfo.h"
-#include "../Cryptopp/misc.h"
-#include "../Cryptopp/cryptlib.h"
-#include "../Cryptopp/asn.h"
-#include "../Cryptopp/queue.h"
+#include <crypto++/misc.h>
+#include <crypto++/misc.h>
+#include <crypto++/cryptlib.h>
+#include <crypto++/cryptlib.h>
+#include <crypto++/asn.h>
+#include <crypto++/asn.h>
+#include <crypto++/queue.h>
+#include <crypto++/queue.h>
 
 //#include "../res/resource.h"
 #include "../Util/CacheLib.h"

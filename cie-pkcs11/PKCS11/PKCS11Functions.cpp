@@ -20,7 +20,8 @@
 #include "../Util/SyncroEvent.h"
 #include <mutex>
 
-#include "../Cryptopp/misc.h"
+#include <crypto++/misc.h>
+#include <crypto++/misc.h>
 #include "../Util/UUCByteArray.h"
 #include "../LOGGER/Logger.h"
 

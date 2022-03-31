@@ -9,7 +9,8 @@
 #else
 #include <openssl/aes.h>
 //#include <OpenSSL-Static/aes.h>
-//#include "../Cryptopp/aes.h"
+//#include <crypto++/aes.h>
+//#include <crypto++/aes.h>
 #endif
 #include "../Util/util.h"
 #include "../Util/UtilException.h"
