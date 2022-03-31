@@ -19,13 +19,13 @@ void notifyPINLocked();
 void notifyPINWrong(int trials);
 
 void GetCertInfo(CryptoPP::BufferedTransformation & certin,
-               std::string & serial,
-               CryptoPP::BufferedTransformation & issuer,
-               CryptoPP::BufferedTransformation & subject,
-               std::string & notBefore,
-               std::string & notAfter,
-               CryptoPP::Integer& mod,
-               CryptoPP::Integer& pubExp);
+			   std::string & serial,
+			   CryptoPP::BufferedTransformation & issuer,
+			   CryptoPP::BufferedTransformation & subject,
+			   std::string & notBefore,
+			   std::string & notAfter,
+			   CryptoPP::Integer& mod,
+			   CryptoPP::Integer& pubExp);
 
 int TokenTransmitCallback(CSlot *data, BYTE *apdu, DWORD apduSize, BYTE *resp, DWORD *respSize) {
 	if (apduSize == 2) {
@@ -33,7 +33,7 @@ int TokenTransmitCallback(CSlot *data, BYTE *apdu, DWORD apduSize, BYTE *resp, D
 		if (code == 0xfffd) {
 			long bufLen = *respSize;
 			*respSize = sizeof(data->hCard)+2;
-            CryptoPP::memcpy_s(resp, bufLen, &data->hCard, sizeof(data->hCard));
+			CryptoPP::memcpy_s(resp, bufLen, &data->hCard, sizeof(data->hCard));
 			resp[sizeof(data->hCard)] = 0;
 			resp[sizeof(data->hCard) + 1] = 0;
 
@@ -42,11 +42,11 @@ int TokenTransmitCallback(CSlot *data, BYTE *apdu, DWORD apduSize, BYTE *resp, D
 		else if (code == 0xfffe) {
 			DWORD protocol = 0;
 			ODS("UNPOWER CARD");
-            auto ris = SCardReconnect(data->hCard, SCARD_SHARE_SHARED, SCARD_PROTOCOL_Tx, SCARD_UNPOWER_CARD, &protocol);
-            
-            
+			auto ris = SCardReconnect(data->hCard, SCARD_SHARE_SHARED, SCARD_PROTOCOL_Tx, SCARD_UNPOWER_CARD, &protocol);
+
+
 			if (ris == SCARD_S_SUCCESS) {
-                SCardBeginTransaction(data->hCard);
+				SCardBeginTransaction(data->hCard);
 				*respSize = 2;
 				resp[0] = 0x90;
 				resp[1] = 0x00;
@@ -57,7 +57,7 @@ int TokenTransmitCallback(CSlot *data, BYTE *apdu, DWORD apduSize, BYTE *resp, D
 			DWORD protocol = 0;
 			auto ris = SCardReconnect(data->hCard, SCARD_SHARE_SHARED, SCARD_PROTOCOL_Tx, SCARD_RESET_CARD, &protocol);
 			if (ris == SCARD_S_SUCCESS) {
-                SCardBeginTransaction(data->hCard);
+				SCardBeginTransaction(data->hCard);
 				*respSize = 2;
 				resp[0] = 0x90;
 				resp[1] = 0x00;
@@ -66,31 +66,31 @@ int TokenTransmitCallback(CSlot *data, BYTE *apdu, DWORD apduSize, BYTE *resp, D
 			return ris;
 		}
 	}
-    
-    //Log.writePure("APDU: %s", dumpHexData(ByteArray(apdu, apduSize)).c_str());
-                  
+
+	//Log.writePure("APDU: %s", dumpHexData(ByteArray(apdu, apduSize)).c_str());
+
 	//ODS(String().printf("APDU: %s\n", dumpHexData(ByteArray(apdu, apduSize), String()).lock()).lock());
 	auto ris = SCardTransmit(data->hCard, SCARD_PCI_T1, apdu, apduSize, NULL, resp, respSize);
-    if(ris == SCARD_W_RESET_CARD || ris == SCARD_W_UNPOWERED_CARD)
-    {
-        LOG_ERROR("TokenTransmitCallback - Card reset error: %x", ris);
-        
-        DWORD protocol = 0;
-        ris = SCardReconnect(data->hCard, SCARD_SHARE_SHARED, SCARD_PROTOCOL_Tx, SCARD_LEAVE_CARD, &protocol);
-        if (ris != SCARD_S_SUCCESS)
-        {
-            LOG_ERROR("TokenTransmitCallback - Errore reconnect %d", ris);
-        }
-        else
-            ris = SCardTransmit(data->hCard, SCARD_PCI_T1, apdu, apduSize, NULL, resp, respSize);
-    }
-    
-    if (ris != SCARD_S_SUCCESS) {
-        LOG_ERROR("TokenTransmitCallback - APDU transmission error: %x", ris);
+	if(ris == SCARD_W_RESET_CARD || ris == SCARD_W_UNPOWERED_CARD)
+	{
+		LOG_ERROR("TokenTransmitCallback - Card reset error: %x", ris);
+
+		DWORD protocol = 0;
+		ris = SCardReconnect(data->hCard, SCARD_SHARE_SHARED, SCARD_PROTOCOL_Tx, SCARD_LEAVE_CARD, &protocol);
+		if (ris != SCARD_S_SUCCESS)
+		{
+			LOG_ERROR("TokenTransmitCallback - Errore reconnect %d", ris);
+		}
+		else
+			ris = SCardTransmit(data->hCard, SCARD_PCI_T1, apdu, apduSize, NULL, resp, respSize);
 	}
-	//else 
+
+	if (ris != SCARD_S_SUCCESS) {
+		LOG_ERROR("TokenTransmitCallback - APDU transmission error: %x", ris);
+	}
+	//else
 		//ODS(String().printf("RESP: %s\n", dumpHexData(ByteArray(resp, *respSize), String()).lock()).lock());
-	
+
 	return ris;
 }
 
@@ -124,7 +124,7 @@ void CIEtemplateInitCard(void *&pTemplateData, CSlot &pSlot){
 
 	pTemplateData = new CIEData(&pSlot, ATR);
 }
-void CIEtemplateFinalCard(void *pTemplateData){ 
+void CIEtemplateFinalCard(void *pTemplateData){
 	if (pTemplateData)
 		delete (CIEData*)pTemplateData;
 }
@@ -138,7 +138,7 @@ ByteArray SkipZero(ByteArray &ba) {
 }
 
 BYTE label[] = { 'C','I','E','0' };
-void CIEtemplateInitSession(void *pTemplateData){ 
+void CIEtemplateInitSession(void *pTemplateData){
 	CIEData* cie=(CIEData*)pTemplateData;
 
 	if (!cie->init) {
@@ -150,7 +150,7 @@ void CIEtemplateInitSession(void *pTemplateData){
 			cie->ias.SetCardContext(&cie->slot);
 			cie->ias.SelectAID_IAS();
 			cie->ias.ReadPAN();
-			
+
 			ByteDynArray resp;
 			cie->ias.SelectAID_CIE();
 			cie->ias.ReadDappPubKey(resp);
@@ -158,67 +158,67 @@ void CIEtemplateInitSession(void *pTemplateData){
 			cie->ias.GetCertificate(certRaw, true);
 		}
 
-        
+
 		CK_BBOOL vtrue = TRUE;
 		CK_BBOOL vfalse = FALSE;
 
-        cie->pubKey = std::make_shared<CP11PublicKey>(cie);
-        cie->privKey = std::make_shared<CP11PrivateKey>(cie);
-        cie->cert = std::make_shared<CP11Certificate>(cie);
-        
-        cie->pubKey->addAttribute(CKA_LABEL, VarToByteArray(label));
-        cie->pubKey->addAttribute(CKA_ID, VarToByteArray(label));
-        cie->pubKey->addAttribute(CKA_PRIVATE, VarToByteArray(vfalse));
-        cie->pubKey->addAttribute(CKA_TOKEN, VarToByteArray(vtrue));
-        cie->pubKey->addAttribute(CKA_VERIFY, VarToByteArray(vtrue));
-        CK_KEY_TYPE keyrsa = CKK_RSA;
-        cie->pubKey->addAttribute(CKA_KEY_TYPE, VarToByteArray(keyrsa));
-        
-        cie->privKey->addAttribute(CKA_LABEL, VarToByteArray(label));
-        cie->privKey->addAttribute(CKA_ID, VarToByteArray(label));
-        cie->privKey->addAttribute(CKA_PRIVATE, VarToByteArray(vtrue));
-        cie->privKey->addAttribute(CKA_TOKEN, VarToByteArray(vtrue));
-        cie->privKey->addAttribute(CKA_KEY_TYPE, VarToByteArray(keyrsa));
-        
-        cie->privKey->addAttribute(CKA_SIGN, VarToByteArray(vtrue));
-        
-        cie->cert->addAttribute(CKA_LABEL, VarToByteArray(label));
-        cie->cert->addAttribute(CKA_ID, VarToByteArray(label));
-        cie->cert->addAttribute(CKA_PRIVATE, VarToByteArray(vfalse));
-        cie->cert->addAttribute(CKA_TOKEN, VarToByteArray(vtrue));
-        
-        CK_CERTIFICATE_TYPE certx509 = CKC_X_509;
-        cie->cert->addAttribute(CKA_CERTIFICATE_TYPE, VarToByteArray(certx509));
-        
-        //LOG_DEBUG("CIEtemplateInitSession - certRaw: %s", dumpHexData(certRaw).c_str());
+		cie->pubKey = std::make_shared<CP11PublicKey>(cie);
+		cie->privKey = std::make_shared<CP11PrivateKey>(cie);
+		cie->cert = std::make_shared<CP11Certificate>(cie);
+
+		cie->pubKey->addAttribute(CKA_LABEL, VarToByteArray(label));
+		cie->pubKey->addAttribute(CKA_ID, VarToByteArray(label));
+		cie->pubKey->addAttribute(CKA_PRIVATE, VarToByteArray(vfalse));
+		cie->pubKey->addAttribute(CKA_TOKEN, VarToByteArray(vtrue));
+		cie->pubKey->addAttribute(CKA_VERIFY, VarToByteArray(vtrue));
+		CK_KEY_TYPE keyrsa = CKK_RSA;
+		cie->pubKey->addAttribute(CKA_KEY_TYPE, VarToByteArray(keyrsa));
+
+		cie->privKey->addAttribute(CKA_LABEL, VarToByteArray(label));
+		cie->privKey->addAttribute(CKA_ID, VarToByteArray(label));
+		cie->privKey->addAttribute(CKA_PRIVATE, VarToByteArray(vtrue));
+		cie->privKey->addAttribute(CKA_TOKEN, VarToByteArray(vtrue));
+		cie->privKey->addAttribute(CKA_KEY_TYPE, VarToByteArray(keyrsa));
+
+		cie->privKey->addAttribute(CKA_SIGN, VarToByteArray(vtrue));
+
+		cie->cert->addAttribute(CKA_LABEL, VarToByteArray(label));
+		cie->cert->addAttribute(CKA_ID, VarToByteArray(label));
+		cie->cert->addAttribute(CKA_PRIVATE, VarToByteArray(vfalse));
+		cie->cert->addAttribute(CKA_TOKEN, VarToByteArray(vtrue));
+
+		CK_CERTIFICATE_TYPE certx509 = CKC_X_509;
+		cie->cert->addAttribute(CKA_CERTIFICATE_TYPE, VarToByteArray(certx509));
+
+		//LOG_DEBUG("CIEtemplateInitSession - certRaw: %s", dumpHexData(certRaw).c_str());
 
 #ifdef WIN32
 		PCCERT_CONTEXT certDS = CertCreateCertificateContext(X509_ASN_ENCODING | PKCS_7_ASN_ENCODING, certRaw.data(), (DWORD)certRaw.size());
 		if (certDS != nullptr) {
 			auto _1 = scopeExit([&]() noexcept {CertFreeCertificateContext(certDS); });
 
-			
+
 
 			CASNParser keyParser;
 			keyParser.Parse(ByteArray(certDS->pCertInfo->SubjectPublicKeyInfo.PublicKey.pbData, certDS->pCertInfo->SubjectPublicKeyInfo.PublicKey.cbData));
 			auto Module = SkipZero(keyParser.tags[0]->tags[0]->content);
 			auto Exponent = SkipZero(keyParser.tags[0]->tags[1]->content);
 			CK_LONG keySizeBits = (CK_LONG)Module.size() * 8;
-			
-            cie->pubKey->addAttribute(CKA_MODULUS, Module);
+
+			cie->pubKey->addAttribute(CKA_MODULUS, Module);
 			cie->pubKey->addAttribute(CKA_PUBLIC_EXPONENT, Exponent);
 			cie->pubKey->addAttribute(CKA_MODULUS_BITS, VarToByteArray(keySizeBits));
-			
-			
 
-			
+
+
+
 			cie->privKey->addAttribute(CKA_MODULUS, Module);
 			cie->privKey->addAttribute(CKA_PUBLIC_EXPONENT, Exponent);
-			
+
 			cie->cert->addAttribute(CKA_ISSUER, ByteArray(certDS->pCertInfo->Issuer.pbData, certDS->pCertInfo->Issuer.cbData));
 			cie->cert->addAttribute(CKA_SERIAL_NUMBER, ByteArray(certDS->pCertInfo->SerialNumber.pbData, certDS->pCertInfo->SerialNumber.cbData));
 			cie->cert->addAttribute(CKA_SUBJECT, ByteArray(certDS->pCertInfo->Subject.pbData, certDS->pCertInfo->Subject.cbData));
-			
+
 			CK_DATE start, end;
 			SYSTEMTIME sFrom, sTo;
 			char temp[10];
@@ -236,80 +236,80 @@ void CIEtemplateInitSession(void *pTemplateData){
 			cie->cert->addAttribute(CKA_END_DATE, VarToByteArray(end));
 		}
 #else
-        // TODO decode the certificate
+		// TODO decode the certificate
 
-        // not before
-        // not after
-        // modulus
-        // public exponent
-        // issuer
-        // serialnumber
-        // subject
-        
-        CryptoPP::ByteQueue certin;
-        certin.Put(certRaw.data(),certRaw.size());
-        
-        
-        
-        std::string serial;
-        CryptoPP::ByteQueue issuer;
-        CryptoPP::ByteQueue subject;
-        std::string notBefore;
-        std::string notAfter;
-        CryptoPP::Integer mod;
-        CryptoPP::Integer pubExp;
-        
-        GetCertInfo(certin, serial, issuer, subject, notBefore, notAfter, mod, pubExp);
-        
-        ByteDynArray modulus(mod.ByteCount());
-        mod.Encode(modulus.data(), modulus.size());
-        
-        ByteDynArray publicExponent(pubExp.ByteCount());
-        pubExp.Encode(publicExponent.data(), publicExponent.size());
-        
-        CK_LONG keySizeBits = (CK_LONG)modulus.size() * 8;
-        
-        cie->pubKey->addAttribute(CKA_MODULUS, modulus);
-        cie->pubKey->addAttribute(CKA_PUBLIC_EXPONENT, publicExponent);
-        cie->pubKey->addAttribute(CKA_MODULUS_BITS, VarToByteArray(keySizeBits));
-        
-        cie->privKey->addAttribute(CKA_MODULUS, modulus);
-        cie->privKey->addAttribute(CKA_PUBLIC_EXPONENT, publicExponent);
-        
-        ByteDynArray issuerBa(issuer.CurrentSize());
-        issuer.Get(issuerBa.data(), issuerBa.size());
-        
-        ByteDynArray subjectBa(subject.CurrentSize());
-        subject.Get(subjectBa.data(), subjectBa.size());
-        
-        cie->cert->addAttribute(CKA_ISSUER, issuerBa);
-        cie->cert->addAttribute(CKA_SERIAL_NUMBER, ByteArray((BYTE*)serial.c_str(), serial.size()));
-        cie->cert->addAttribute(CKA_SUBJECT, subjectBa);
-    
-        
-        CK_DATE start, end;
-        
-        SYSTEMTIME sFrom, sTo;
-        sFrom = convertStringToSystemTime(notBefore.c_str());
-        sTo = convertStringToSystemTime(notAfter.c_str());
-        
-        cie->cert->addAttribute(CKA_START_DATE, VarToByteArray(start));
-        cie->cert->addAttribute(CKA_END_DATE, VarToByteArray(end));
-        
-        // add to the object
+		// not before
+		// not after
+		// modulus
+		// public exponent
+		// issuer
+		// serialnumber
+		// subject
+
+		CryptoPP::ByteQueue certin;
+		certin.Put(certRaw.data(),certRaw.size());
+
+
+
+		std::string serial;
+		CryptoPP::ByteQueue issuer;
+		CryptoPP::ByteQueue subject;
+		std::string notBefore;
+		std::string notAfter;
+		CryptoPP::Integer mod;
+		CryptoPP::Integer pubExp;
+
+		GetCertInfo(certin, serial, issuer, subject, notBefore, notAfter, mod, pubExp);
+
+		ByteDynArray modulus(mod.ByteCount());
+		mod.Encode(modulus.data(), modulus.size());
+
+		ByteDynArray publicExponent(pubExp.ByteCount());
+		pubExp.Encode(publicExponent.data(), publicExponent.size());
+
+		CK_LONG keySizeBits = (CK_LONG)modulus.size() * 8;
+
+		cie->pubKey->addAttribute(CKA_MODULUS, modulus);
+		cie->pubKey->addAttribute(CKA_PUBLIC_EXPONENT, publicExponent);
+		cie->pubKey->addAttribute(CKA_MODULUS_BITS, VarToByteArray(keySizeBits));
+
+		cie->privKey->addAttribute(CKA_MODULUS, modulus);
+		cie->privKey->addAttribute(CKA_PUBLIC_EXPONENT, publicExponent);
+
+		ByteDynArray issuerBa(issuer.CurrentSize());
+		issuer.Get(issuerBa.data(), issuerBa.size());
+
+		ByteDynArray subjectBa(subject.CurrentSize());
+		subject.Get(subjectBa.data(), subjectBa.size());
+
+		cie->cert->addAttribute(CKA_ISSUER, issuerBa);
+		cie->cert->addAttribute(CKA_SERIAL_NUMBER, ByteArray((BYTE*)serial.c_str(), serial.size()));
+		cie->cert->addAttribute(CKA_SUBJECT, subjectBa);
+
+
+		CK_DATE start, end;
+
+		SYSTEMTIME sFrom, sTo;
+		sFrom = convertStringToSystemTime(notBefore.c_str());
+		sTo = convertStringToSystemTime(notAfter.c_str());
+
+		cie->cert->addAttribute(CKA_START_DATE, VarToByteArray(start));
+		cie->cert->addAttribute(CKA_END_DATE, VarToByteArray(end));
+
+		// add to the object
 #endif
-        
-        size_t len = GetASN1DataLenght(certRaw);
-        cie->cert->addAttribute(CKA_VALUE, certRaw.left(len));
-        
-        cie->slot.AddP11Object(cie->pubKey);
-        cie->slot.AddP11Object(cie->privKey);
-        cie->slot.AddP11Object(cie->cert);
-        
+
+		size_t len = GetASN1DataLenght(certRaw);
+		cie->cert->addAttribute(CKA_VALUE, certRaw.left(len));
+
+		cie->slot.AddP11Object(cie->pubKey);
+		cie->slot.AddP11Object(cie->privKey);
+		cie->slot.AddP11Object(cie->cert);
+
 		cie->init = true;
 	}
 }
-void CIEtemplateFinalSession(void *pTemplateData){ 
+void CIEtemplateFinalSession(void *pTemplateData){
 	//delete (CIEData*)pTemplateData;
 }
 
@@ -353,8 +353,8 @@ ByteDynArray  CIEtemplateGetSerial(CSlot &pSlot) {
 		return ByteArray((BYTE*)numSerial.c_str(),numSerial.length());
 	}
 }
-void CIEtemplateGetModel(CSlot &pSlot, std::string &szModel){ 
-	szModel = ""; 
+void CIEtemplateGetModel(CSlot &pSlot, std::string &szModel){
+	szModel = "";
 }
 void CIEtemplateGetTokenFlags(CSlot &pSlot, CK_FLAGS &dwFlags){
 	dwFlags = CKF_LOGIN_REQUIRED | CKF_USER_PIN_INITIALIZED | CKF_TOKEN_INITIALIZED | CKF_REMOVABLE_DEVICE;
@@ -380,12 +380,12 @@ void CIEtemplateLogin(void *pTemplateData, CK_USER_TYPE userType, ByteArray &Pin
 		cie->ias.InitDHParam();
 
 		if (cie->ias.DappPubKey.isEmpty()) {
-			ByteDynArray DappKey;			
+			ByteDynArray DappKey;
 			cie->ias.ReadDappPubKey(DappKey);
 		}
 
 		cie->ias.InitExtAuthKeyParam();
-		// faccio lo scambio di chiavi DH	
+		// faccio lo scambio di chiavi DH
 		if (cie->ias.Callback != nullptr)
 			cie->ias.Callback(1, "DiffieHellman", cie->ias.CallbackData);
 		cie->ias.DHKeyExchange();
@@ -411,30 +411,30 @@ void CIEtemplateLogin(void *pTemplateData, CK_USER_TYPE userType, ByteArray &Pin
 
 		if (sw == 0x6983) {
 			if (userType == CKU_USER)
-            {
-                notifyPINLocked();
+			{
+				notifyPINLocked();
 				//cie->ias.IconaSbloccoPIN();
-                throw p11_error(CKR_PIN_LOCKED);
-            }
+				throw p11_error(CKR_PIN_LOCKED);
+			}
 		}
 		if (sw >= 0x63C0 && sw <= 0x63CF) {
 			int attemptsRemaining = sw - 0x63C0;
-            notifyPINWrong(attemptsRemaining);
+			notifyPINWrong(attemptsRemaining);
 			throw p11_error(CKR_PIN_INCORRECT);
 		}
 		if (sw == 0x6700) {
-            notifyPINWrong(-1);
+			notifyPINWrong(-1);
 			throw p11_error(CKR_PIN_INCORRECT);
 		}
 		if (sw == 0x6300)
-        {
-            notifyPINWrong(-1);
+		{
+			notifyPINWrong(-1);
 			throw p11_error(CKR_PIN_INCORRECT);
-        }
+		}
 		if (sw != 0x9000) {
 			throw scard_error(sw);
 		}
-        
+
 		cie->SessionPIN = cie->aesKey.Encode(Pin);
 		cie->userType = userType;
 	}
@@ -458,7 +458,7 @@ void CIEtemplateSign(void *pCardTemplateData, CP11PrivateKey *pPrivKey, ByteArra
 		{
 			safeConnection safeConn(cie->slot.hCard);
 			CCardLocker lockCard(cie->slot.hCard);
-            
+
 			Pin = cie->aesKey.Decode(cie->SessionPIN);
 			cie->ias.SelectAID_IAS();
 			cie->ias.SelectAID_CIE();
@@ -475,7 +475,7 @@ void CIEtemplateSign(void *pCardTemplateData, CP11PrivateKey *pPrivKey, ByteArra
 	}
 }
 
-void CIEtemplateInitPIN(void *pCardTemplateData, ByteArray &baPin){ 
+void CIEtemplateInitPIN(void *pCardTemplateData, ByteArray &baPin){
 	init_func
 	CToken token;
 	CIEData* cie = (CIEData*)pCardTemplateData;
@@ -488,7 +488,7 @@ void CIEtemplateInitPIN(void *pCardTemplateData, ByteArray &baPin){
 		{
 			safeConnection safeConn(cie->slot.hCard);
 			CCardLocker lockCard(cie->slot.hCard);
-            
+
 			Pin = cie->aesKey.Decode(cie->SessionPIN);
 			cie->ias.SelectAID_IAS();
 			cie->ias.SelectAID_CIE();
@@ -576,95 +576,95 @@ void CIEtemplateGenerateKeyPair(void *pCardTemplateData, CK_MECHANISM_PTR pMecha
  */
 
 void GetPublicKeyFromCert(CryptoPP::BufferedTransformation & certin,
-                          CryptoPP::BufferedTransformation & keyout,
-                          CryptoPP::BufferedTransformation & issuer,
-                          
-                          Integer &serial)
+						  CryptoPP::BufferedTransformation & keyout,
+						  CryptoPP::BufferedTransformation & issuer,
+
+						  Integer &serial)
 {
-    BERSequenceDecoder x509Cert(certin);
-    BERSequenceDecoder tbsCert(x509Cert);
-    
-    // ASN.1 from RFC 3280
-    // TBSCertificate  ::=  SEQUENCE  {
-    // version         [0]  EXPLICIT Version DEFAULT v1,
-    
-    // consume the context tag on the version
-    BERGeneralDecoder context(tbsCert,0xa0);
-    word32 ver;
-    
-    // only want a v3 cert
-    BERDecodeUnsigned<word32>(context,ver,INTEGER,2,2);
-    
-    // serialNumber         CertificateSerialNumber,
-    serial.BERDecode(tbsCert);
-    
-    // signature            AlgorithmIdentifier,
-    BERSequenceDecoder signature(tbsCert);
-    signature.SkipAll();
-    
-    // issuer               Name,
-    BERSequenceDecoder issuerName(tbsCert);
-    issuerName.CopyTo(issuer);
-    issuerName.SkipAll();
-    
-    // validity             Validity,
-    BERSequenceDecoder validity(tbsCert);
-    validity.SkipAll();
-    
-    // subject              Name,
-    BERSequenceDecoder subjectName(tbsCert);
-    subjectName.SkipAll();
-    
-    // subjectPublicKeyInfo SubjectPublicKeyInfo,
-    BERSequenceDecoder spki(tbsCert);
-    DERSequenceEncoder spkiEncoder(keyout);
-    
-    spki.CopyTo(spkiEncoder);
-    spkiEncoder.MessageEnd();
-    
-    spki.SkipAll();
-    tbsCert.SkipAll();
-    x509Cert.SkipAll();
+	BERSequenceDecoder x509Cert(certin);
+	BERSequenceDecoder tbsCert(x509Cert);
+
+	// ASN.1 from RFC 3280
+	// TBSCertificate  ::=  SEQUENCE  {
+	// version         [0]  EXPLICIT Version DEFAULT v1,
+
+	// consume the context tag on the version
+	BERGeneralDecoder context(tbsCert,0xa0);
+	word32 ver;
+
+	// only want a v3 cert
+	BERDecodeUnsigned<word32>(context,ver,INTEGER,2,2);
+
+	// serialNumber         CertificateSerialNumber,
+	serial.BERDecode(tbsCert);
+
+	// signature            AlgorithmIdentifier,
+	BERSequenceDecoder signature(tbsCert);
+	signature.SkipAll();
+
+	// issuer               Name,
+	BERSequenceDecoder issuerName(tbsCert);
+	issuerName.CopyTo(issuer);
+	issuerName.SkipAll();
+
+	// validity             Validity,
+	BERSequenceDecoder validity(tbsCert);
+	validity.SkipAll();
+
+	// subject              Name,
+	BERSequenceDecoder subjectName(tbsCert);
+	subjectName.SkipAll();
+
+	// subjectPublicKeyInfo SubjectPublicKeyInfo,
+	BERSequenceDecoder spki(tbsCert);
+	DERSequenceEncoder spkiEncoder(keyout);
+
+	spki.CopyTo(spkiEncoder);
+	spkiEncoder.MessageEnd();
+
+	spki.SkipAll();
+	tbsCert.SkipAll();
+	x509Cert.SkipAll();
 }
 
 
 
 void GetCertInfo(CryptoPP::BufferedTransformation & certin,
-                 std::string & serial,
-                 CryptoPP::BufferedTransformation & issuer,
-                 CryptoPP::BufferedTransformation & subject,
-                 std::string & notBefore,
-                 std::string & notAfter,
-                 CryptoPP::Integer& mod,
-                 CryptoPP::Integer& pubExp)
+				 std::string & serial,
+				 CryptoPP::BufferedTransformation & issuer,
+				 CryptoPP::BufferedTransformation & subject,
+				 std::string & notBefore,
+				 std::string & notAfter,
+				 CryptoPP::Integer& mod,
+				 CryptoPP::Integer& pubExp)
 {
 
-    BERSequenceDecoder cert(certin);
-    
-    BERSequenceDecoder toBeSignedCert(cert);
-    
-    // consume the context tag on the version
-    BERGeneralDecoder context(toBeSignedCert,0xa0);
-    word32 ver;
-    
-    // only want a v3 cert
-    BERDecodeUnsigned<word32>(context,ver,INTEGER,2,2);
-    
-    serial = CryptoppUtils::Cert::ReadIntegerAsString(toBeSignedCert);
+	BERSequenceDecoder cert(certin);
 
-    // algorithmId
-    CryptoppUtils::Cert::SkipNextSequence(toBeSignedCert);
-    
-    
-    // issuer               Name,
-    BERSequenceDecoder issuerName(toBeSignedCert);
-    DERSequenceEncoder issuerEncoder(issuer);
-    issuerName.CopyTo(issuerEncoder);
-    issuerEncoder.MessageEnd();
-    
+	BERSequenceDecoder toBeSignedCert(cert);
+
+	// consume the context tag on the version
+	BERGeneralDecoder context(toBeSignedCert,0xa0);
+	word32 ver;
+
+	// only want a v3 cert
+	BERDecodeUnsigned<word32>(context,ver,INTEGER,2,2);
+
+	serial = CryptoppUtils::Cert::ReadIntegerAsString(toBeSignedCert);
+
+	// algorithmId
+	CryptoppUtils::Cert::SkipNextSequence(toBeSignedCert);
+
+
+	// issuer               Name,
+	BERSequenceDecoder issuerName(toBeSignedCert);
+	DERSequenceEncoder issuerEncoder(issuer);
+	issuerName.CopyTo(issuerEncoder);
+	issuerEncoder.MessageEnd();
+
 //    issuerName.CopyTo(issuer);
-    issuerName.SkipAll();
-    
+	issuerName.SkipAll();
+
 //    CryptoPP::BERSequenceDecoder issuer(toBeSignedCert); {
 //        CryptoPP::BERSetDecoder c(issuer);
 //        c.SkipAll();
@@ -691,18 +691,18 @@ void GetCertInfo(CryptoPP::BufferedTransformation & certin,
 //    }
 //
 //    issuer.SkipAll();
-    
-    // validity
-    CryptoppUtils::Cert::ReadDateTimeSequence(toBeSignedCert, notBefore, notAfter);
 
-    // subject
-    BERSequenceDecoder subjectName(toBeSignedCert);
-    DERSequenceEncoder subjectEncoder(subject);
-    subjectName.CopyTo(subjectEncoder);
-    subjectEncoder.MessageEnd();
-    
+	// validity
+	CryptoppUtils::Cert::ReadDateTimeSequence(toBeSignedCert, notBefore, notAfter);
+
+	// subject
+	BERSequenceDecoder subjectName(toBeSignedCert);
+	DERSequenceEncoder subjectEncoder(subject);
+	subjectName.CopyTo(subjectEncoder);
+	subjectEncoder.MessageEnd();
+
 //    subjectName.CopyTo(subject);
-    subjectName.SkipAll();
+	subjectName.SkipAll();
 //
 //    CryptoPP::BERSequenceDecoder subject(toBeSignedCert); {
 //        CryptoPP::BERSetDecoder c(subject);
@@ -730,24 +730,24 @@ void GetCertInfo(CryptoPP::BufferedTransformation & certin,
 //            subject.SkipAll();
 //        }
 //    }
-    
-    // Public key
-    CryptoPP::BERSequenceDecoder publicKey(toBeSignedCert); {
-        CryptoPP::BERSequenceDecoder ident(publicKey);
-        ident.SkipAll();
-        CryptoPP::BERGeneralDecoder key(publicKey, CryptoPP::BIT_STRING);
-        key.Skip(1);  // Must skip (possibly a bug in Crypto++)
-        CryptoPP::BERSequenceDecoder keyPair(key);
-        
-        mod.BERDecode(keyPair);
-        pubExp.BERDecode(keyPair);
-        
-        
-    }
-    
-    publicKey.SkipAll();
-    toBeSignedCert.SkipAll();
-    cert.SkipAll();
+
+	// Public key
+	CryptoPP::BERSequenceDecoder publicKey(toBeSignedCert); {
+		CryptoPP::BERSequenceDecoder ident(publicKey);
+		ident.SkipAll();
+		CryptoPP::BERGeneralDecoder key(publicKey, CryptoPP::BIT_STRING);
+		key.Skip(1);  // Must skip (possibly a bug in Crypto++)
+		CryptoPP::BERSequenceDecoder keyPair(key);
+
+		mod.BERDecode(keyPair);
+		pubExp.BERDecode(keyPair);
+
+
+	}
+
+	publicKey.SkipAll();
+	toBeSignedCert.SkipAll();
+	cert.SkipAll();
 }
 
-        
+
