@@ -17,14 +17,17 @@
  */
 
 /* This is a sample file containing the top level include directives
- * for building Win32 Cryptoki libraries and applications.
+ * for building Cryptoki libraries and applications.
  */
 
 #ifndef ___CRYPTOKI_H_INC___
 #define ___CRYPTOKI_H_INC___
 
-#if defined(WIN32) || defined(_WIN32)
+#if defined(WIN32) || defined(_WIN32) || defined(__clang__)
+// For clang see https://releases.llvm.org/3.4/tools/clang/docs/UsersManual.html#microsoft-extensions
 #pragma pack(push, cryptoki, 1)
+#elif defined(__gcc__)
+#pragma pack(push, 1)
 #endif
 
 #if !defined(WIN32) && !defined(_WIN32)
@@ -32,7 +35,7 @@
 #define CK_EXPORT_SPEC
 #define CK_CALL_SPEC
 
-#else
+#else // !defined(WIN32) && !defined(_WIN32)
 
 /* Specifies that the function is a DLL entry point. */
 #define CK_IMPORT_SPEC __declspec(dllimport)
@@ -54,10 +57,10 @@
 /* Ensures the calling convention for Win32 builds */
 #define CK_CALL_SPEC __cdecl
 
-#endif
+#endif // !defined(WIN32) && !defined(_WIN32)
 
-#define CK_DEFINE_FUNCTION(returnType, name) \
-  returnType CK_EXPORT_SPEC CK_CALL_SPEC name
+
+#define CK_PTR *
 
 #define CK_DECLARE_FUNCTION(returnType, name) \
   returnType CK_EXPORT_SPEC CK_CALL_SPEC name
@@ -66,7 +69,7 @@
   returnType CK_IMPORT_SPEC (CK_CALL_SPEC* name)
 
 #define CK_CALLBACK_FUNCTION(returnType, name) \
-  returnType(* name)
+  returnType (* name)
 
 #ifndef NULL_PTR
 #define NULL_PTR 0
@@ -74,8 +77,10 @@
 
 #include "pkcs11.h"
 
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN32)
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN32) || defined(__clang__)
 #pragma pack(pop, cryptoki)
+#elif defined(__gcc__)
+#pragma pack(pop)
 #endif
 
 #endif /* ___CRYPTOKI_H_INC___ */
