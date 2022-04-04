@@ -378,11 +378,14 @@ namespace p11 {
 		if (IsTokenPresent())
 			pInfo->flags |= CKF_TOKEN_PRESENT;
 
-		memset(pInfo->slotDescription, 0, 64);
+		// PKCS11:
+		// MUST be padded with the blank character (‘ ‘).
+		// MUST NOT be null-terminated.
+		memset(pInfo->slotDescription, ' ', 64);
 		size_t SDLen = min1(64, szName.size() - 1);
 		CryptoPP::memcpy_s(pInfo->slotDescription, 64, szName.c_str(), SDLen);
 
-		memset(pInfo->manufacturerID, 0, 32);
+		memset(pInfo->manufacturerID, ' ', 32);
 		// non so esattamente perch�, ma nella R1 il manufacturerID sono i primi 32 dello slotDescription
 		size_t MIDLen = min1(32, szName.size());
         CryptoPP::memcpy_s(pInfo->manufacturerID, 32, szName.c_str(), MIDLen);
