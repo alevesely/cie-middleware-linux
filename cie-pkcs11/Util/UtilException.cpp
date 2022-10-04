@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <pcsclite.h>
 #include "UtilException.h"
 #include "util.h"
 #include "../LOGGER/Logger.h"
