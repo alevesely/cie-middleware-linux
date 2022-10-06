@@ -73,7 +73,7 @@ BOOL APIENTRY DllMainP11( HANDLE hModule,
 		//p11Mutex.Create(mainMutexName.c_str());
 		//xmlInit();
 		std::string configPath;
-		configPath = moduleInfo.szModulePath + moduleInfo.szModuleName + ".ini";
+		// configPath = moduleInfo.szModulePath + moduleInfo.szModuleName + ".ini";
 		initLog(configPath.c_str(), __DATE__ " " __TIME__);
 		
 		p11::InitP11(configPath.c_str());
@@ -118,7 +118,7 @@ __attribute__((constructor)) void DllMainAttach()
 {
     // code
     bModuleInit=true;
-    std::string configPath = "/usr/local/lib/ciepki.ini";
+    std::string configPath = "/etc/ciepki.ini";
     initLog("CIEPKC11", configPath.c_str(), __DATE__ " " __TIME__);
     p11::InitP11(configPath.c_str());
 }
