@@ -235,11 +235,13 @@ std::string GetCardDir()
 
     std::string path(home);
     
+#if 0
     std::smatch match;
     std::regex_search(path, match, std::regex("^/home/"));
     std::string suffix = match.suffix();
     if(suffix.find("/") != std::string::npos)
         throw 1;
+#endif
 
     path.append("/.CIEPKI/");
 

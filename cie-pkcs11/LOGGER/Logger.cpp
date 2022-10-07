@@ -9,10 +9,10 @@
 #include <sys/time.h>
 #include <stdarg.h>
 
-#include <regex>
+#include <Util/util.h>
+
 using namespace std;
 using namespace CieIDLogger;
-
 
 inline bool config_exists(const string& name) {
 	ifstream f(name.c_str());
@@ -148,18 +148,9 @@ int Logger::getLogConfig() throw() {
 	string sConfig;
 	int log_level;
 	struct stat result;
-	    
-    char* home = getenv("HOME");
-    std::string path(home);
-	
-    /*
-    if(path.find("/Library") == string::npos){
-        path.append("/Library/Containers/it.ipzs.CIE-ID.CIEToken/Data");
-    }
-    */
+ 
+    std::string path = get_home_ciepki_path();
 
-    path.append("/.CIEPKI/");
-	
     //check if folder exist
     struct stat st = {0};
     

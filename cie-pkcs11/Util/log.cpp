@@ -13,13 +13,10 @@
 #include "IniSettings.h"
 #include <thread>
 #include <stdio.h>
-#include <unistd.h>
 #include "UUCProperties.h"
 #include <sys/stat.h>
-#include <regex>
 #include <unistd.h>
 #include <sys/types.h>
-#include <pwd.h>
 
 std::string globalLogDir;
 std::string globalLogName;
@@ -79,31 +76,8 @@ void initLog(const char *moduleName, const char *iniFile,const char *version)
     
     globalLogName = moduleName;
     
-    char* home = getenv("HOME");
-    if(home == NULL)
-    {
-    	struct passwd *pw = getpwuid(getuid());
+    std::string path = get_home_ciepki_path();
 
-    	home = pw->pw_dir;
-    	printf("home: %s", home);
-    }
-
-    std::string path(home);
-
-	std::smatch match;
-	std::regex_search(path, match, std::regex("^/(home|root)/"));
-	std::string suffix = match.suffix();
-	if(suffix.find("/") != std::string::npos)
-		throw 1;
-
-//    std::smatch match;
-//    std::regex_search(path, match, std::regex("^/Users/"));
-//    std::string suffix = match.suffix();
-//    if(suffix.find("/") != std::string::npos)
-//        throw 1;
-    
-    path.append("/.CIEPKI/");
-    
     struct stat st = {0};
     
     if (stat(path.c_str(), &st) == -1) {

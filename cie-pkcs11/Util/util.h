@@ -218,6 +218,8 @@ typedef struct _SYSTEMTIME {
 
 SYSTEMTIME convertStringToSystemTime(const char *dateTimeString);
 
+std::string get_home_ciepki_path(void);
+
 uint8_t hex2byte(char h);
 void readHexData(const std::string &data,ByteDynArray &ba);
 std::string HexByte(uint8_t data, bool uppercase = true);

@@ -5,9 +5,47 @@
 //#include <dbghelp.h>
 #include <iomanip>
 #include <sstream>
-#include "../LOGGER/Logger.h"
+#include <LOGGER/Logger.h>
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 using namespace CieIDLogger;
+
+std::string get_home_ciepki_path()
+{
+    char* home = getenv("HOME");
+    if(home == NULL)
+    {
+    	struct passwd *pw = getpwuid(getuid());
+
+    	home = pw->pw_dir;
+    	printf("home: %s", home);
+    }
+
+    std::string path(home);
+    if (path.rfind("/home/", 5) == 0 || path.rfind("/root/", 5) == 0)
+    {
+		path.append("/.CIEPKI/");
+		return path;
+	}
+
+	throw 1;
+	return 0;
+
+#if 0
+	std::smatch match;
+	std::regex_search(path, match, std::regex("^/(home|root)/"));
+	std::string suffix = match.suffix();
+	if(suffix.find("/") != std::string::npos)
+	{
+		OutputDebugString(suffix.c_str());
+		throw 1;
+	}
+#endif
+}
+
 
 DWORD ERR_ATTRIBUTE_IS_SENSITIVE = 0x40000008;
 DWORD ERR_OBJECT_HASNT_ATTRIBUTE = 0x40000009;
