@@ -3,8 +3,8 @@
 #ifdef WIN32
 #include <winscard.h>
 #else
-#include <PCSC/winscard.h>
-#include <PCSC/wintypes.h>
+#include <winscard.h>
+#include <wintypes.h>
 #endif
 #include "../Util/Array.h"
 #include <vector>

@@ -6,7 +6,7 @@
 #ifdef WIN32
 #include <winscard.h>
 #else
-#include <PCSC/winscard.h>
+#include <winscard.h>
 #endif
 #include "session.h"
 #include "CardTemplate.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <PCSC/winscard.h>
+#include <winscard.h>
 
 class CCardContext
 {
